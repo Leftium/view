@@ -2,6 +2,9 @@
 
 
 <main>
+    <div>
+        <input bind:value={itemPath} placeholder='TaskPaper Query'>
+    </div>
     <div id=content>
         {@html html}
     </div>

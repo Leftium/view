@@ -1,3 +1,4 @@
+`let itemPath = '';`
 html = ''
 
 TASKPAPER_TEXT = """
@@ -34,4 +35,4 @@ renderTaskpaperOutline  = (text, itemPath='*') ->
 
     return html
 
-html = renderTaskpaperOutline TASKPAPER_TEXT
+`$: html = renderTaskpaperOutline(TASKPAPER_TEXT, itemPath || '*');`
