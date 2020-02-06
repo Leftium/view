@@ -1,5 +1,4 @@
-`let itemPath = '';`
-html = ''
+import { onMount } from 'svelte'
 
 TASKPAPER_TEXT = """
 ProjectA: @tag(with value)
@@ -11,6 +10,13 @@ ProjectB:
 	- Plain task3
 	Plain note
 """
+
+`
+let itemPath = '';
+let text = TASKPAPER_TEXT;
+`
+html = ''
+
 
 renderTaskpaperOutline  = (text, itemPath='*') ->
     renderItem = (item) ->
@@ -35,4 +41,21 @@ renderTaskpaperOutline  = (text, itemPath='*') ->
 
     return html
 
-`$: html = renderTaskpaperOutline(TASKPAPER_TEXT, itemPath || '*');`
+`$: html = renderTaskpaperOutline(text, itemPath || '*');`
+
+
+onDropboxChoose = (results) ->
+    console.log results
+    res = await fetch results[0].link
+    `$: text = await res.text()`
+    console.log text
+
+
+onMount () ->
+    options =
+        success: onDropboxChoose
+        linkType: 'direct'
+        multiselect: false
+        extensions: ['text']
+    button = Dropbox.createChooseButton(options)
+    document.getElementById('controls').appendChild(button)

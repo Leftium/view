@@ -2,7 +2,7 @@
 
 
 <main>
-    <div>
+    <div id=controls>
         <input bind:value={itemPath} placeholder='TaskPaper Query'>
     </div>
     <div id=content>
