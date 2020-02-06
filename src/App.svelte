@@ -1,6 +1,5 @@
-<script>
-	export let name;
-</script>
+<script src='./script.coffee'></script>
+
 
 <main>
 	<h1>Hello {name}!</h1>
