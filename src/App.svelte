@@ -2,9 +2,6 @@
 
 
 <main>
-    <h1>Hello {name}!</h1>
-    <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-
     <div id=content>
         {@html html}
     </div>
@@ -13,18 +10,9 @@
 
 <style>
     main {
-        padding: 1em;
-        max-width: 240px;
-        margin: 0 auto;
+        padding: 0.5em;
     }
 
-    h1 {
-        color: #ff3e00;
-        text-transform: uppercase;
-        font-size: 4em;
-        font-weight: 100;
-    }
-    
     #content {
         white-space: pre-wrap;
         display: inline-block;
@@ -45,11 +33,5 @@
     {
         list-style-type: none;
         margin: .38em auto;
-    }
-
-    @media (min-width: 640px) {
-        main {
-            max-width: none;
-        }
     }
 </style>

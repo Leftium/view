@@ -1,5 +1,3 @@
-`export let name;`
-
 html = ''
 
 TASKPAPER_TEXT = """
