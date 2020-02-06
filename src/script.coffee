@@ -11,14 +11,14 @@ ProjectB:
 	Plain note
 """
 
-`
-let itemPath = '';
-let text = TASKPAPER_TEXT;
-`
+
+itemPath = ''
+contentText = TASKPAPER_TEXT
 html = ''
 
 
 renderTaskpaperOutline  = (text, itemPath='*') ->
+    text = await text
     renderItem = (item) ->
         itemLI = document.createElement('li')
         for attribute in item.attributeNames
@@ -41,14 +41,28 @@ renderTaskpaperOutline  = (text, itemPath='*') ->
 
     return html
 
-`$: html = renderTaskpaperOutline(text, itemPath || '*');`
+location = window.location
+urlObject = new URL location
+
+url = urlObject.searchParams.get 'url'
+itemPath = urlObject.searchParams.get('query')
+
+
+loadUrl = (url) ->
+    url = url.replace /www.dropbox.com/, 'dl.dropboxusercontent.com'
+    res = await fetch url
+    await res.text()
+
+
+if url
+    contentText = loadUrl(url)
+
+`$: html = renderTaskpaperOutline(contentText, itemPath || '*');`
 
 
 onDropboxChoose = (results) ->
-    console.log results
-    res = await fetch results[0].link
-    `$: text = await res.text()`
-    console.log text
+    url = "#{location.origin}/?url=#{results[0].link}"
+    window.open url, '_top'
 
 
 onMount () ->
