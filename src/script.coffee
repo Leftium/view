@@ -1,5 +1,70 @@
 import { onMount } from 'svelte'
 
+import * as linkify from 'linkifyjs'
+import linkifyHtml from 'linkifyjs/html'
+
+
+
+MAXLENGTH = 50
+LINKIFY_OPTIONS =
+    attributes: (href) ->
+        attributes =
+            title: href
+    format: (value) =>
+
+        constructUrl = (head, tail) ->
+            if tail.length
+                head.concat(tail).join('/')
+            else
+                head.join('/')
+
+        truncate = (string, length) ->
+            if string.length > length
+                string = string[0...length-1] + '…'
+            string
+
+
+        # Strip URL hash, query strings, http, www, trailing slash
+        value = value.split('#')[0]
+                     .split('?')[0]
+                     .replace ///^https?://(www[0-9]*\.)?///i, ''
+                     .replace ////$///i, ''
+
+
+        # If URL short enough, don't shorten
+        if value.length < MAXLENGTH
+            return value
+
+        parts = value.split('/')
+
+        # Start with the domain
+        head = parts.splice(0, 1)
+        tail = []
+
+        # strip file extension
+        lastPart = parts.pop()
+        lastPart = lastPart?.replace ///(index)?\.[a-z]+$///i, ''
+        if lastPart
+            parts.push(lastPart)
+
+        # Append very last URL fragment, truncating if required
+        lengthLeft = MAXLENGTH - constructUrl(head, tail).length
+        if lengthLeft > 0 and parts.length
+            fragment = parts.pop()
+            tail.push(truncate(fragment, lengthLeft))
+
+        # Insert very first URL fragment, truncating if required
+        lengthLeft = MAXLENGTH - constructUrl(head, tail).length
+        if lengthLeft > 0 and parts.length
+            fragment = parts.shift()
+            head.push(truncate(fragment, lengthLeft))
+
+        if parts.length
+            head.push('\u22EF')  # Midline horizontal ellipsis ⋯
+
+        constructUrl(head, tail)
+
+
 TASKPAPER_TEXT = """
 ProjectA: @tag(with value)
 	- Task1 with @baretag in middle
@@ -30,7 +95,7 @@ renderTaskpaperOutline  = (text, itemPath='*') ->
         itemLI.setAttribute 'depth', item.depth
         itemLI.innerHTML = indentation + item.bodyHighlightedAttributedString
                                              .toInlineBMLString() or '&nbsp;'
-        return itemLI.outerHTML
+        return linkifyHtml itemLI.outerHTML, LINKIFY_OPTIONS
 
     outline = new birchoutline.Outline.createTaskPaperOutline(text)
     results = outline.evaluateItemPath(itemPath)
